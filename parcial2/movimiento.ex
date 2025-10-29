@@ -1,22 +1,26 @@
-defmodule Ejercicio2 do
-  @moduledoc """
-  Procesamiento de movimientos de inventario
-  """
+defmodule Movimiento do
+  defstruct [:codigo, :tipo, :cantidad, :fecha]
 
-  alias Ejercicio1.Pieza
-
-  defmodule Movimiento do
-    defstruct [:codigo, :tipo, :cantidad, :fecha]
+  # Crear archivo CSV con movimientos de ejemplo
+  def crear_archivo_ejemplo(path) do
+    contenido = """
+    COD123,ENTRADA,50,2025-09-10
+    COD124,SALIDA,10,2025-09-12
+    COD125,ENTRADA,20,2025-09-11
+    COD126,SALIDA,5,2025-09-09
+    """
+    File.write(path, String.trim(contenido))
   end
 
-  def leer_movimientos(archivo) do
-    case File.read(archivo) do
+  # Leer archivo de movimientos
+  def leer_archivo(path) do
+    case File.read(path) do
       {:ok, contenido} ->
         lineas = String.split(contenido, "\n", trim: true)
-        {:ok, parsear_linas(lineas)}
+        {:ok, parsear_lineas(lineas)}
 
       {:error, razon} ->
-        {:error, "No se pudo leer el archivo: #{razon}"}
+        {:error, "Error al leer movimientos: #{razon}"}
     end
   end
 
@@ -32,7 +36,7 @@ defmodule Ejercicio2 do
     [mov | parsear_lineas(resto)]
   end
 
-  # A. Aplicar los movimientos al stock de cada pieza
+  # Aplicar movimientos al stock
   def aplicar_movimientos([], _), do: []
   def aplicar_movimientos([pieza | resto], movimientos) do
     nuevo_stock = actualizar_stock(pieza, movimientos)
@@ -52,7 +56,7 @@ defmodule Ejercicio2 do
     end
   end
 
-  # B. Guardar inventario actualizado en archivo CSV
+  # Guardar inventario actualizado en CSV
   def guardar_inventario(path, piezas) do
     contenido = generar_csv(piezas)
     File.write(path, contenido)

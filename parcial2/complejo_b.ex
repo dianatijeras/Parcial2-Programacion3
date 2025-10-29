@@ -1,4 +1,4 @@
-defmodule Ejercicio5 do
+defmodule ComplejoB do
   def f(n) when n <= 1, do: n + 2
 
   def f(n) when rem(n, 2) == 0 do
